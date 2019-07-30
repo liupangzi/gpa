@@ -15,10 +15,13 @@ limitations under the License.
 */
 package main
 
-import "github.com/liupangzi/gpa/cmd"
+import (
+	"github.com/liupangzi/gpa/cmd"
+	"github.com/liupangzi/gpa/logger"
+)
 
 func main() {
 	if err := cmd.RootCmd.Execute(); err != nil {
-		panic(err)
+		logger.Log.Error(err)
 	}
 }

@@ -1,10 +1,10 @@
-// Code generated from CreateTable.g4 by ANTLR 4.7.2. DO NOT EDIT.
+// Code generated from CreateTableParser.g4 by ANTLR 4.7.2. DO NOT EDIT.
 
-package mysql // CreateTable
+package ddlparser // CreateTableParser
 import "github.com/antlr/antlr4/runtime/Go/antlr"
 
-// CreateTableListener is a complete listener for a parse tree produced by CreateTableParser.
-type CreateTableListener interface {
+// CreateTableParserListener is a complete listener for a parse tree produced by CreateTableParser.
+type CreateTableParserListener interface {
 	antlr.ParseTreeListener
 
 	// EnterRoot is called when entering the root production.
@@ -46,8 +46,17 @@ type CreateTableListener interface {
 	// EnterColumnConstraint is called when entering the columnConstraint production.
 	EnterColumnConstraint(c *ColumnConstraintContext)
 
+	// EnterNullNotNull is called when entering the nullNotNull production.
+	EnterNullNotNull(c *NullNotNullContext)
+
+	// EnterComment is called when entering the comment production.
+	EnterComment(c *CommentContext)
+
 	// EnterDefaultValue is called when entering the defaultValue production.
 	EnterDefaultValue(c *DefaultValueContext)
+
+	// EnterPrimaryKey is called when entering the primaryKey production.
+	EnterPrimaryKey(c *PrimaryKeyContext)
 
 	// EnterUnaryOperator is called when entering the unaryOperator production.
 	EnterUnaryOperator(c *UnaryOperatorContext)
@@ -112,8 +121,17 @@ type CreateTableListener interface {
 	// ExitColumnConstraint is called when exiting the columnConstraint production.
 	ExitColumnConstraint(c *ColumnConstraintContext)
 
+	// ExitNullNotNull is called when exiting the nullNotNull production.
+	ExitNullNotNull(c *NullNotNullContext)
+
+	// ExitComment is called when exiting the comment production.
+	ExitComment(c *CommentContext)
+
 	// ExitDefaultValue is called when exiting the defaultValue production.
 	ExitDefaultValue(c *DefaultValueContext)
+
+	// ExitPrimaryKey is called when exiting the primaryKey production.
+	ExitPrimaryKey(c *PrimaryKeyContext)
 
 	// ExitUnaryOperator is called when exiting the unaryOperator production.
 	ExitUnaryOperator(c *UnaryOperatorContext)

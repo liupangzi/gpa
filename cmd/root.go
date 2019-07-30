@@ -7,10 +7,10 @@ import (
 var RootCmd = &cobra.Command{
 	Use:     "gpa",
 	Short:   "Golang Persistence API",
-	Long:    "Golang programming interface that describes the management of MySQL / ElasticSearch data in applications.",
+	Long:    "Golang programming interface that describes the management of MySQL data in applications.",
 	Version: "0.0.1",
 }
 
 func init() {
-	RootCmd.AddCommand(esCmd, mysqlCmd)
+	RootCmd.AddCommand(mysqlCmd)
 }

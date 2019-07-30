@@ -1,137 +1,10 @@
-// antlr -Dlanguage=Go CreateTable.g4 -o . -package mysql
+// antlr -Dlanguage=Go DDLLexer.g4 -o . -package ddlparser
 
-grammar CreateTable;
+lexer grammar DDLLexer;
 
-root
-    : createTableDDL ';'? EOF
-    ;
-
-createTableDDL
-    : CREATE TEMPORARY? TABLE ifNotExists? tableName
-      createDefinitions
-      ( tableOption (','? tableOption)* )?
-    ;
-
-tableName
-    : BackQuotedString
-    | RawString
-    ;
-
-ifNotExists
-    : IF NOT EXISTS
-    ;
-
-createDefinitions
-    : '(' createDefinition (',' createDefinition)* ')'
-    ;
-
-createDefinition
-    : field=(BackQuotedString | RawString) columnDefinition
-    | tableConstraint
-    ;
-
-columnDefinition
-    : dataType columnConstraint*
-    ;
-
-dataType
-    : typeName=(CHAR | VARCHAR | TINYTEXT | TEXT | MEDIUMTEXT | LONGTEXT | NCHAR | NVARCHAR)
-      lengthOneDimension? BINARY? ((CHARACTER SET | CHARSET) (BINARY | RawString | BackQuotedString))? (COLLATE Literal)?
-    | NATIONAL typeName=(VARCHAR | CHARACTER) lengthOneDimension? BINARY?
-    | NCHAR typeName=VARCHAR lengthOneDimension? BINARY?
-    | NATIONAL typeName=(CHAR | CHARACTER) VARYING lengthOneDimension? BINARY?
-    | typeName=(TINYINT | SMALLINT | MEDIUMINT | INT | INTEGER | BIGINT) lengthOneDimension? (SIGNED | UNSIGNED)? ZEROFILL?
-    | typeName=REAL lengthTwoDimension? (SIGNED | UNSIGNED)? ZEROFILL?
-    | typeName=DOUBLE PRECISION? lengthTwoDimension? (SIGNED | UNSIGNED)? ZEROFILL?
-    | typeName=(DECIMAL | DEC | FIXED | NUMERIC | FLOAT) lengthTwoOptionalDimension? (SIGNED | UNSIGNED)? ZEROFILL?
-    | typeName=(DATE | TINYBLOB | BLOB | MEDIUMBLOB | LONGBLOB | BOOL | BOOLEAN | SERIAL | JSON)
-    | typeName=(BIT | TIME | TIMESTAMP | DATETIME | BINARY | VARBINARY | YEAR) lengthOneDimension?
-    | typeName=(ENUM | SET) collectionOptions BINARY? ((CHARACTER SET | CHARSET) (BINARY | RawString | BackQuotedString))?
-    ;
-
-lengthOneDimension
-    : '(' Integer ')'
-    ;
-
-lengthTwoDimension
-    : '(' Integer ',' Integer ')'
-    ;
-
-lengthTwoOptionalDimension
-    : '(' Integer (',' Integer)? ')'
-    ;
-
-collectionOptions
-    : '(' Literal (',' Literal)* ')'
-    ;
-
-columnConstraint
-    : NOT? NULL
-    | DEFAULT defaultValue
-    | AUTO_INCREMENT
-    | PRIMARY? KEY
-    | UNIQUE KEY?
-    | COMMENT Literal
-    | COLLATE BackQuotedString
-    | SERIAL DEFAULT VALUE
-    ;
-
-defaultValue
-    : NULL
-    | unaryOperator? constant
-    | currentTimestamp (ON UPDATE currentTimestamp)?
-    ;
-
-unaryOperator
-    : '!' | '~' | '+' | '-' | NOT
-    ;
-
-constant
-    : Literal | Integer
-    | '-' Integer
-    | (TRUE | FALSE)
-    | Number
-    | NOT? NULL
-    ;
-
-currentTimestamp
-    :
-    (
-      (CURRENT_TIMESTAMP | LOCALTIME | LOCALTIMESTAMP) ('(' Integer? ')')?
-      | NOW '(' Integer? ')'
-    )
-    ;
-
-tableConstraint
-    : (CONSTRAINT name=(Literal | RawString)?)?
-      PRIMARY KEY index=(Literal | RawString)? (BackQuotedString | RawString)?
-      indexColumnNames indexOption*
-    | (CONSTRAINT name=(Literal | RawString)?)?
-      UNIQUE? indexFormat=(INDEX | KEY)? index=(BackQuotedString | RawString)?
-      indexType? indexColumnNames indexOption*
-    ;
-
-indexOption
-    : KEY_BLOCK_SIZE '='? FilesizeLiteral
-    | WITH PARSER (Literal | RawString)
-    | COMMENT Literal
-    ;
-
-indexType
-    : USING (BTREE | HASH)
-    ;
-
-indexColumnNames
-    : '(' (BackQuotedString | RawString) (',' BackQuotedString | RawString)* ')'
-    ;
-
-tableOption
-    : ENGINE '='? (BackQuotedString | RawString)
-    | AUTO_INCREMENT '='? Integer
-    | DEFAULT? (CHARACTER SET | CHARSET) '='? (BackQuotedString | RawString)
-    | DEFAULT? COLLATE '='? (BackQuotedString | RawString)
-    | COMMENT '='? Literal
-    ;
+channels {
+    INLINE_COMMENT_CHANNEL
+}
 
 AUTO_INCREMENT
     : [aA][uU][tT][oO]'_'[iI][nN][cC][rR][eE][mM][eE][nN][tT]
@@ -449,15 +322,50 @@ ZEROFILL
     : [zZ][eE][rR][oO][fF][iI][lL][lL]
     ;
 
+Equal
+    : '='
+    ;
+
+Semicolon
+    : ';'
+    ;
+
+Comma
+    : ','
+    ;
+
+LeftParenthesis
+    : '('
+    ;
+
+RightParenthesis
+    : ')'
+    ;
+
+Tilde
+    : '~'
+    ;
+
+Exclamation
+    : '!'
+    ;
+
+Plus
+    : '+'
+    ;
+
+Minus
+    : '-'
+    ;
 
 Integer
-    : ('+' | '-')? [1-9] DECIMAL_DIGIT*
-    | ('+' | '-')? DECIMAL_DIGIT
+    : (Plus | Minus)? [1-9] DECIMAL_DIGIT*
+    | (Plus | Minus)? DECIMAL_DIGIT
     ;
 
 Number
-    : ('+' | '-')? [1-9] DECIMAL_DIGIT* ( '.' DECIMAL_DIGIT+ )?
-    | ('+' | '-')? DECIMAL_DIGIT ( '.' DECIMAL_DIGIT+ )?
+    : (Plus | Minus)? [1-9] DECIMAL_DIGIT* ( '.' DECIMAL_DIGIT+ )?
+    | (Plus | Minus)? DECIMAL_DIGIT ( '.' DECIMAL_DIGIT+ )?
     ;
 
 FilesizeLiteral
@@ -499,6 +407,16 @@ fragment SQUOTA_STRING
     : '\'' ('\\'. | '\'\'' | ~('\'' | '\\'))* '\''
     ;
 
-WS
-    : [ \t\r\n]+ -> skip
+SPACE
+    : [ \t\r\n]+ -> channel(HIDDEN)
     ;
+
+BLOCK_COMMENT
+    : '/*' .*? '*/' -> channel(HIDDEN)
+    ;
+
+LINE_COMMENT
+    : (
+        ('-- ' | '#') ~[\r\n]* ('\r'? '\n' | EOF)
+        | '--' ('\r'? '\n' | EOF)
+      ) -> channel(INLINE_COMMENT_CHANNEL);
