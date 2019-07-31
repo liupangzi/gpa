@@ -61,7 +61,7 @@ func (g *GoImplGenerator) Parse() {
 	f, err := parser.ParseFile(g.FileSet, g.Source, nil, parser.ParseComments)
 	if err != nil {
 		logger.Log.Errorf("Parse() err: %s", err.Error())
-		os.Exit(-1)
+		os.Exit(-20)
 	}
 
 	g.validate(f)
@@ -96,7 +96,7 @@ func (g *GoImplGenerator) validate(f *ast.File) {
 
 	if interfaceCount != 1 {
 		logger.Log.Errorf("gpa supports one interface per source file, found: %d", interfaceCount)
-		os.Exit(-2)
+		os.Exit(-21)
 	}
 }
 
@@ -172,7 +172,7 @@ func (g *GoImplGenerator) parseMethods(f *ast.File) {
 							if funcType, ok := method.Type.(*ast.FuncType); ok {
 								if !method.Names[0].IsExported() {
 									logger.Log.Errorf("Method `%s` is not exported... quit.", method.Names[0].String())
-									os.Exit(-10)
+									os.Exit(-22)
 								}
 
 								method := &GoMethod{
@@ -205,7 +205,7 @@ func (g *GoImplGenerator) bindAnnotations() {
 		if comment.Line < method.Line {
 			if method.DML != Unknown {
 				logger.Log.Errorf("Multiple annotations found for method `%s`", method.Name)
-				os.Exit(-110)
+				os.Exit(-23)
 			}
 
 			p := crudParser.NewCRUDAnnotationParser(antlr.NewCommonTokenStream(crudParser.NewCRUDAnnotationLexer(antlr.NewInputStream(comment.Content)), antlr.TokenDefaultChannel))

@@ -37,13 +37,13 @@ mysql > SHOW CREATE TABLE t`)
 	modelCmd.Flags().StringVarP(&modelTargetFile, "target", "t", "", "generated go model file")
 	if err := modelCmd.MarkFlagRequired("target"); err != nil {
 		logger.Log.Error(err.Error())
-		os.Exit(-1)
+		os.Exit(-2)
 	}
 
 	modelCmd.Flags().StringVarP(&modelPackageName, "package_name", "p", "", "go model package name")
 	if err := modelCmd.MarkFlagRequired("package_name"); err != nil {
 		logger.Log.Error(err.Error())
-		os.Exit(-1)
+		os.Exit(-3)
 	}
 }
 
@@ -88,13 +88,13 @@ func New[[ .StructName ]]() *[[ .StructName ]] {
 func Model(sourceFile, packageName string) {
 	if _, err := os.Stat(sourceFile); os.IsNotExist(err) {
 		logger.Log.Errorf("ddl file `%s` not exists", sourceFile)
-		os.Exit(-1)
+		os.Exit(-4)
 	}
 
 	fs, err := antlr.NewFileStream(sourceFile)
 	if err != nil {
 		logger.Log.Errorf("antlr.NewFileStream err: %s", err.Error())
-		os.Exit(-2)
+		os.Exit(-5)
 	}
 
 	p := parser.NewCreateTableParser(antlr.NewCommonTokenStream(parser.NewDDLLexer(fs), antlr.TokenDefaultChannel))
@@ -131,26 +131,26 @@ func Model(sourceFile, packageName string) {
 	t, err := template.New("MySQLModel").Delims("[[", "]]").Parse(modelTemplate)
 	if err != nil {
 		logger.Log.Errorf("init text/template err: %s", err.Error())
-		os.Exit(-3)
+		os.Exit(-6)
 	}
 
 	buf := &bytes.Buffer{}
 	if err := t.Execute(buf, createTableListener); err != nil {
 		logger.Log.Errorf("render text/template err: %s", err.Error())
-		os.Exit(-4)
+		os.Exit(-7)
 	}
 
 	targetDir := path.Dir(modelTargetFile)
 	if _, err := os.Stat(targetDir); err != nil && os.IsNotExist(err) {
 		if mkdirErr := os.MkdirAll(targetDir, 0644); mkdirErr != nil {
 			logger.Log.Errorf("mkdir `%s` err: %s", targetDir, err.Error())
-			os.Exit(-5)
+			os.Exit(-8)
 		}
 	}
 
 	if err := ioutil.WriteFile(modelTargetFile, buf.Bytes(), 0644); err != nil {
 		logger.Log.Errorf("dump file `%s` err: %s", modelTargetFile, err.Error())
-		os.Exit(-6)
+		os.Exit(-9)
 	}
 }
 
