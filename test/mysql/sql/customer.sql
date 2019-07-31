@@ -11,6 +11,7 @@ CREATE TABLE `customer`
     `address`     text                  DEFAULT NULL,
     `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time` DATETIME              DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    UNIQUE KEY (`email`)
+    UNIQUE KEY (`card_id`),
+    INDEX (email)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;

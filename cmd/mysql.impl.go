@@ -19,7 +19,7 @@ func init() {
 	implCmd.Flags().StringVarP(&implSourceFile, "source", "s", "", "source go interface file")
 	if err := implCmd.MarkFlagRequired("source"); err != nil {
 		logger.Log.Error(err.Error())
-		os.Exit(-1)
+		os.Exit(-10)
 	}
 }
 
@@ -89,13 +89,13 @@ func Implement(s string) {
 		Parse(implementTemplate)
 	if err != nil {
 		logger.Log.Errorf("init text/template err: %s", err.Error())
-		os.Exit(-1)
+		os.Exit(-11)
 	}
 
 	buf := &bytes.Buffer{}
 	if err := t.Execute(buf, goImplGenerator); err != nil {
 		logger.Log.Errorf("render text/template err: %s", err.Error())
-		os.Exit(-2)
+		os.Exit(-12)
 	}
 
 	for _, method := range goImplGenerator.IFace.Methods {
@@ -110,6 +110,6 @@ func Implement(s string) {
 
 	if err := ioutil.WriteFile(targetFile, buf.Bytes(), 0644); err != nil {
 		logger.Log.Errorf("dump file `%s` err: %s", targetFile, err.Error())
-		os.Exit(-3)
+		os.Exit(-13)
 	}
 }

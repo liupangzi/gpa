@@ -19,4 +19,16 @@ type Journey interface {
 
 	// @Delete("DELETE FROM customer WHERE id = ?")
 	DeleteCustomerByID(ctx context.Context, ID uint64) (sql.Result, error)
+
+	// @Select("SELECT * FROM customer WHERE id = ?")
+	GetCustomerByID(ctx context.Context, ID uint64) (model.Customer, error)
+
+	// @Select("SELECT * FROM ticket WHERE id = ?")
+	GetTicketByID(ctx context.Context, ID uint64) (*model.Ticket, error)
+
+	// @Select("SELECT * FROM ticket WHERE customer_id = ? ORDER BY id DESC LIMIT 10")
+	GetTicketsByCustomerID(ctx context.Context, customerID uint64) ([]*model.Ticket, error)
+
+	// @Select("SELECT * FROM customer WHERE name = ? AND email = ? LIMIT ?, ?")
+	GetCustomersByNameAndEmail(ctx context.Context, name, email string, offset, limit uint64) ([]model.Customer, error)
 }

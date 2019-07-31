@@ -16,6 +16,7 @@ CREATE TABLE `ticket`
     secret_key    tinyblob                 DEFAULT NULL COMMENT 'Whats your secret',
     `create_time` DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time` DATETIME                 DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    UNIQUE KEY (`customer_id`)
+    UNIQUE KEY (`from`),
+    INDEX (customer_id)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;

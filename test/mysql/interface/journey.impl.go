@@ -91,3 +91,51 @@ func (db *JourneyImpl) DeleteCustomerByID(ctx context.Context, ID uint64) (sql.R
 func (tx *TxJourneyImpl) DeleteCustomerByID(ctx context.Context, ID uint64) (sql.Result, error) {
 	return tx.TX.ExecContext(ctx, "DELETE FROM customer WHERE id = ?", ID)
 }
+
+func (db *JourneyImpl) GetCustomerByID(ctx context.Context, ID uint64) (model.Customer, error) {
+	var result model.Customer
+	err := db.DB.Get(&result, "SELECT * FROM customer WHERE id = ?", ID)
+	return result, err
+}
+
+func (tx *TxJourneyImpl) GetCustomerByID(ctx context.Context, ID uint64) (model.Customer, error) {
+	var result model.Customer
+	err := tx.TX.Get(&result, "SELECT * FROM customer WHERE id = ?", ID)
+	return result, err
+}
+
+func (db *JourneyImpl) GetTicketByID(ctx context.Context, ID uint64) (*model.Ticket, error) {
+	var result model.Ticket
+	err := db.DB.Get(&result, "SELECT * FROM ticket WHERE id = ?", ID)
+	return &result, err
+}
+
+func (tx *TxJourneyImpl) GetTicketByID(ctx context.Context, ID uint64) (*model.Ticket, error) {
+	var result model.Ticket
+	err := tx.TX.Get(&result, "SELECT * FROM ticket WHERE id = ?", ID)
+	return &result, err
+}
+
+func (db *JourneyImpl) GetTicketsByCustomerID(ctx context.Context, customerID uint64) ([]*model.Ticket, error) {
+	var result []*model.Ticket
+	err := db.DB.Select(&result, "SELECT * FROM ticket WHERE customer_id = ? ORDER BY id DESC LIMIT 10", customerID)
+	return result, err
+}
+
+func (tx *TxJourneyImpl) GetTicketsByCustomerID(ctx context.Context, customerID uint64) ([]*model.Ticket, error) {
+	var result []*model.Ticket
+	err := tx.TX.Select(&result, "SELECT * FROM ticket WHERE customer_id = ? ORDER BY id DESC LIMIT 10", customerID)
+	return result, err
+}
+
+func (db *JourneyImpl) GetCustomersByNameAndEmail(ctx context.Context, name, email string, offset, limit uint64) ([]model.Customer, error) {
+	var result []model.Customer
+	err := db.DB.Select(&result, "SELECT * FROM customer WHERE name = ? AND email = ? LIMIT ?, ?", name, email, offset, limit)
+	return result, err
+}
+
+func (tx *TxJourneyImpl) GetCustomersByNameAndEmail(ctx context.Context, name, email string, offset, limit uint64) ([]model.Customer, error) {
+	var result []model.Customer
+	err := tx.TX.Select(&result, "SELECT * FROM customer WHERE name = ? AND email = ? LIMIT ?, ?", name, email, offset, limit)
+	return result, err
+}
