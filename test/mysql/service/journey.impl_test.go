@@ -203,14 +203,17 @@ func (s *JourneySuite) TestAddTicket() {
 }
 
 func (s *JourneySuite) TestUpdateCustomerNameByEmail() {
+	email := faker.Internet().Email()
+	name := faker.Name().String()
+
 	Convey("Add customer", s.T(), func() {
 		now := time.Now().AddDate(-1, 2, 3)
 		customer := model.Customer{
 			CardId:     int16(faker.RandomInt(-32768, 32767)),
 			Order:      int32(faker.RandomInt(-2147483648, 2147483647)),
 			MemberId:   sql.NullInt64{},
-			Email:      "i@liuchao.me",
-			Name:       "a wrong name",
+			Email:      email,
+			Name:       faker.Name().String(),
 			Address:    sql.NullString{},
 			CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 			UpdateTime: mysql.NullTime{
@@ -227,8 +230,8 @@ func (s *JourneySuite) TestUpdateCustomerNameByEmail() {
 		So(err, ShouldBeNil)
 	})
 
-	Convey(`Update the customer with name "liupangzi"`, s.T(), func() {
-		result, err := j.UpdateCustomerNameByEmail(context.TODO(), "liupangzi", "i@liuchao.me")
+	Convey(`Update the customer's name by email`, s.T(), func() {
+		result, err := j.UpdateCustomerNameByEmail(context.TODO(), name, email)
 		So(err, ShouldBeNil)
 
 		rowsAffected, err := result.RowsAffected()
@@ -236,16 +239,16 @@ func (s *JourneySuite) TestUpdateCustomerNameByEmail() {
 		So(err, ShouldBeNil)
 
 		getCustomer := &model.Customer{}
-		err = j.DB.Get(getCustomer, "SELECT * FROM customer WHERE email = \"i@liuchao.me\" LIMIT 1")
+		err = j.DB.Get(getCustomer, "SELECT * FROM customer WHERE email = ? LIMIT 1", email)
 		So(err, ShouldBeNil)
-		So(getCustomer.Name, ShouldEqual, "liupangzi")
+		So(getCustomer.Name, ShouldEqual, name)
 	})
 }
 
 func (s *JourneySuite) TestDeleteCustomerByID() {
 	ID := uint64(100)
 
-	Convey("Add customer", s.T(), func() {
+	Convey("Add customer w/ id == 100", s.T(), func() {
 		now := time.Now().AddDate(-1, 2, 3)
 		customer := model.Customer{
 			CardId: int16(faker.RandomInt(-32768, 32767)),
@@ -276,7 +279,7 @@ func (s *JourneySuite) TestDeleteCustomerByID() {
 		So(err, ShouldBeNil)
 	})
 
-	Convey("Delete customer w/ ID == 100", s.T(), func() {
+	Convey("Delete customer w/ id == 100", s.T(), func() {
 		result, err := j.DeleteCustomerByID(context.TODO(), ID)
 		So(err, ShouldBeNil)
 
@@ -581,5 +584,151 @@ func (s *JourneySuite) TestGetCustomersByNameAndEmail() {
 		So(result, ShouldHaveLength, 2)
 		So(result[0].Order, ShouldEqual, -32)
 		So(result[1].Order, ShouldEqual, -8)
+	})
+}
+
+func (s *JourneySuite) TestGetCustomerEmailsByName() {
+	name := faker.Name().String()
+	email1, email2 := faker.Internet().Email(), faker.Internet().Email()
+
+	Convey("Add customers", s.T(), func() {
+		Convey("First customer", func() {
+			lastInsertID := int64(0)
+			now := time.Now()
+
+			customer := model.Customer{
+				CardId:     int16(faker.RandomInt(-32768, 32767)),
+				Order:      int32(faker.RandomInt(-2147483648, 2147483647)),
+				MemberId:   sql.NullInt64{},
+				Email:      email1,
+				Name:       name,
+				Address:    sql.NullString{},
+				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
+				UpdateTime: mysql.NullTime{
+					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
+					Valid: true,
+				},
+			}
+
+			result, err := j.AddCustomer(context.TODO(), customer)
+			So(err, ShouldBeNil)
+
+			rowsAffected, err := result.RowsAffected()
+			So(rowsAffected, ShouldEqual, 1)
+			So(err, ShouldBeNil)
+
+			lastInsertID, err = result.LastInsertId()
+			So(lastInsertID, ShouldBeGreaterThanOrEqualTo, 1)
+			So(err, ShouldBeNil)
+		})
+
+		Convey("Second customer", func() {
+			lastInsertID := int64(0)
+			now := time.Now()
+
+			customer := model.Customer{
+				CardId:     int16(faker.RandomInt(-32768, 32767)),
+				Order:      int32(faker.RandomInt(-2147483648, 2147483647)),
+				MemberId:   sql.NullInt64{},
+				Email:      faker.Internet().Email(),
+				Name:       faker.Name().String(),
+				Address:    sql.NullString{},
+				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
+				UpdateTime: mysql.NullTime{
+					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
+					Valid: true,
+				},
+			}
+
+			result, err := j.AddCustomer(context.TODO(), customer)
+			So(err, ShouldBeNil)
+
+			rowsAffected, err := result.RowsAffected()
+			So(rowsAffected, ShouldEqual, 1)
+			So(err, ShouldBeNil)
+
+			lastInsertID, err = result.LastInsertId()
+			So(lastInsertID, ShouldBeGreaterThanOrEqualTo, 1)
+			So(err, ShouldBeNil)
+		})
+
+		Convey("Third customer", func() {
+			lastInsertID := int64(0)
+			now := time.Now()
+
+			customer := model.Customer{
+				CardId:     int16(faker.RandomInt(-32768, 32767)),
+				Order:      int32(faker.RandomInt(-2147483648, 2147483647)),
+				MemberId:   sql.NullInt64{},
+				Email:      email2,
+				Name:       name,
+				Address:    sql.NullString{},
+				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
+				UpdateTime: mysql.NullTime{
+					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
+					Valid: true,
+				},
+			}
+
+			result, err := j.AddCustomer(context.TODO(), customer)
+			So(err, ShouldBeNil)
+
+			rowsAffected, err := result.RowsAffected()
+			So(rowsAffected, ShouldEqual, 1)
+			So(err, ShouldBeNil)
+
+			lastInsertID, err = result.LastInsertId()
+			So(lastInsertID, ShouldBeGreaterThanOrEqualTo, 1)
+			So(err, ShouldBeNil)
+		})
+	})
+
+	Convey("Test GetCustomerEmailsByName()", s.T(), func() {
+		result, err := j.GetCustomerEmailsByName(context.Background(), name)
+		So(err, ShouldBeNil)
+		So(result, ShouldHaveLength, 2)
+		So(result[0], ShouldEqual, email1)
+		So(result[1], ShouldEqual, email2)
+	})
+}
+
+func (s *JourneySuite) TestGetCustomerNameByEmail() {
+	name := faker.Name().String()
+	email := faker.Internet().Email()
+
+	Convey("Add customer", s.T(), func() {
+		lastInsertID := int64(0)
+		now := time.Now()
+
+		customer := model.Customer{
+			CardId:     int16(faker.RandomInt(-32768, 32767)),
+			Order:      int32(faker.RandomInt(-2147483648, 2147483647)),
+			MemberId:   sql.NullInt64{},
+			Email:      email,
+			Name:       name,
+			Address:    sql.NullString{},
+			CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
+			UpdateTime: mysql.NullTime{
+				Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
+				Valid: true,
+			},
+		}
+
+		result, err := j.AddCustomer(context.TODO(), customer)
+		So(err, ShouldBeNil)
+
+		rowsAffected, err := result.RowsAffected()
+		So(rowsAffected, ShouldEqual, 1)
+		So(err, ShouldBeNil)
+
+		lastInsertID, err = result.LastInsertId()
+		So(lastInsertID, ShouldBeGreaterThanOrEqualTo, 1)
+		So(err, ShouldBeNil)
+	})
+
+	Convey("Test GetCustomerNameByEmail()", s.T(), func() {
+		result, err := j.GetCustomerNameByEmail(context.Background(), email)
+		So(err, ShouldBeNil)
+		So(result, ShouldEqual, name)
 	})
 }

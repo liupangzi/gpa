@@ -1,4 +1,4 @@
--- go run main.go mysql model -s=test/mysql/sql/customer.sql -t=test/mysql/model/customer.go -p=test_mysql_model && gofmt -w test/mysql/model/customer.go
+-- gpa mysql model -s=test/mysql/sql/customer.sql -t=test/mysql/model/customer.go -p=test_mysql_model && gofmt -w test/mysql/model/customer.go
 
 CREATE TABLE `customer`
 (

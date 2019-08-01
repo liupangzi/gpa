@@ -31,4 +31,10 @@ type Journey interface {
 
 	// @Select("SELECT * FROM customer WHERE name = ? AND email = ? LIMIT ?, ?")
 	GetCustomersByNameAndEmail(ctx context.Context, name, email string, offset, limit uint64) ([]model.Customer, error)
+
+	// @Select("SELECT `email` FROM customer WHERE name = ? LIMIT 0, 3")
+	GetCustomerEmailsByName(ctx context.Context, name string) ([]string, error)
+
+	// @Select("SELECT name FROM `customer` WHERE email = ? LIMIT 1")
+	GetCustomerNameByEmail(ctx context.Context, email string) (string, error)
 }

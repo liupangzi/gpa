@@ -63,31 +63,22 @@ func (tx *Tx[[ .StructName ]]Impl) [[ .Method ]](ctx context.Context[[ .Params ]
 		Params:     params.String(),
 	}
 
-	var selector *ast.SelectorExpr
-	if s, isSlice := method.Results[0].Type.(*ast.ArrayType); isSlice { // return slice
+	astType := method.Results[0].Type
+
+	// return slice
+	if _, isSlice := astType.(*ast.ArrayType); isSlice {
 		bindvarsSelect.IsSlice = true
-		if t, isPointer := s.Elt.(*ast.StarExpr); isPointer {
-			bindvarsSelect.IsPointer = true
-			selector = t.X.(*ast.SelectorExpr)
-		} else if t, isSelector := s.Elt.(*ast.SelectorExpr); isSelector {
-			selector = t
-		} else {
-			logger.Log.Error("Unsupported method.Result type found")
-			os.Exit(-31)
-		}
-	} else {
-		if t, isPointer := method.Results[0].Type.(*ast.StarExpr); isPointer {
-			bindvarsSelect.IsPointer = true
-			selector = t.X.(*ast.SelectorExpr)
-		} else if t, isSelector := method.Results[0].Type.(*ast.SelectorExpr); isSelector {
-			selector = t
-		} else {
-			logger.Log.Error("Unsupported method.Result type found")
-			os.Exit(-31)
-		}
+		astType = astType.(*ast.ArrayType).Elt
 	}
 
-	bindvarsSelect.Result = selector.X.(*ast.Ident).Name + "." + selector.Sel.Name
+	if p, isPointer := astType.(*ast.StarExpr); isPointer {
+		bindvarsSelect.IsPointer = true
+		bindvarsSelect.Result = p.X.(*ast.SelectorExpr).X.(*ast.Ident).Name + "." + p.X.(*ast.SelectorExpr).Sel.Name
+	} else if s, isSelector := astType.(*ast.SelectorExpr); isSelector {
+		bindvarsSelect.Result = s.X.(*ast.Ident).Name + "." + s.Sel.Name
+	} else {
+		bindvarsSelect.Result = astType.(*ast.Ident).Name
+	}
 
 	t, err := template.New("selectTpl").Delims("[[", "]]").Parse(tpl)
 	if err != nil {

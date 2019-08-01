@@ -1,4 +1,4 @@
--- go run main.go mysql model -s=test/mysql/sql/ticket.sql -t=test/mysql/model/ticket.go -p=test_mysql_model && gofmt -w test/mysql/model/ticket.go
+-- gpa mysql model -s=test/mysql/sql/ticket.sql -t=test/mysql/model/ticket.go -p=test_mysql_model && gofmt -w test/mysql/model/ticket.go
 
 CREATE TABLE `ticket`
 (
