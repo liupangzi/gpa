@@ -139,3 +139,27 @@ func (tx *TxJourneyImpl) GetCustomersByNameAndEmail(ctx context.Context, name, e
 	err := tx.TX.Select(&result, "SELECT * FROM customer WHERE name = ? AND email = ? LIMIT ?, ?", name, email, offset, limit)
 	return result, err
 }
+
+func (db *JourneyImpl) GetCustomerEmailsByName(ctx context.Context, name string) ([]string, error) {
+	var result []string
+	err := db.DB.Select(&result, "SELECT `email` FROM customer WHERE name = ? LIMIT 0, 3", name)
+	return result, err
+}
+
+func (tx *TxJourneyImpl) GetCustomerEmailsByName(ctx context.Context, name string) ([]string, error) {
+	var result []string
+	err := tx.TX.Select(&result, "SELECT `email` FROM customer WHERE name = ? LIMIT 0, 3", name)
+	return result, err
+}
+
+func (db *JourneyImpl) GetCustomerNameByEmail(ctx context.Context, email string) (string, error) {
+	var result string
+	err := db.DB.Get(&result, "SELECT name FROM `customer` WHERE email = ? LIMIT 1", email)
+	return result, err
+}
+
+func (tx *TxJourneyImpl) GetCustomerNameByEmail(ctx context.Context, email string) (string, error) {
+	var result string
+	err := tx.TX.Get(&result, "SELECT name FROM `customer` WHERE email = ? LIMIT 1", email)
+	return result, err
+}
