@@ -128,28 +128,28 @@ func Model(sourceFile, packageName string) {
 		},
 	})
 
-	t, err := template.New("MySQLModel").Delims("[[", "]]").Parse(modelTemplate)
-	if err != nil {
-		logger.Log.Errorf("init text/template err: %s", err.Error())
+	t, tplErr := template.New("MySQLModel").Delims("[[", "]]").Parse(modelTemplate)
+	if tplErr != nil {
+		logger.Log.Errorf("init text/template err: %s", tplErr.Error())
 		os.Exit(-6)
 	}
 
 	buf := &bytes.Buffer{}
-	if err := t.Execute(buf, createTableListener); err != nil {
-		logger.Log.Errorf("render text/template err: %s", err.Error())
+	if tplExecuteErr := t.Execute(buf, createTableListener); tplExecuteErr != nil {
+		logger.Log.Errorf("render text/template err: %s", tplExecuteErr.Error())
 		os.Exit(-7)
 	}
 
 	targetDir := path.Dir(modelTargetFile)
-	if _, err := os.Stat(targetDir); err != nil && os.IsNotExist(err) {
+	if _, targetDirErr := os.Stat(targetDir); targetDirErr != nil && os.IsNotExist(err) {
 		if mkdirErr := os.MkdirAll(targetDir, 0644); mkdirErr != nil {
-			logger.Log.Errorf("mkdir `%s` err: %s", targetDir, err.Error())
+			logger.Log.Errorf("mkdir `%s` err: %s", targetDir, mkdirErr.Error())
 			os.Exit(-8)
 		}
 	}
 
-	if err := ioutil.WriteFile(modelTargetFile, buf.Bytes(), 0644); err != nil {
-		logger.Log.Errorf("dump file `%s` err: %s", modelTargetFile, err.Error())
+	if writeFileErr := ioutil.WriteFile(modelTargetFile, buf.Bytes(), 0644); writeFileErr != nil {
+		logger.Log.Errorf("dump file `%s` err: %s", modelTargetFile, writeFileErr.Error())
 		os.Exit(-9)
 	}
 }
@@ -292,7 +292,7 @@ func processTypes(l *listener.CreateTableListener) {
 				d.SQLType == "mediumblob" ||
 				d.SQLType == "longblob" {
 				d.Type = "[]byte"
-				d.Size = unsafe.Sizeof([]byte(""))
+				d.Size = unsafe.Sizeof("")
 			} else if d.SQLType == "serial" {
 				d.Type = "uint64"
 				d.NotNull = true

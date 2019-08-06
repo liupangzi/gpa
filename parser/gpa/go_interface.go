@@ -83,8 +83,8 @@ func (g *GoImplGenerator) validate(f *ast.File) {
 			}
 
 			for _, spec := range genDeclaration.Specs {
-				if typeSpec, ok := spec.(*ast.TypeSpec); ok {
-					if interfaceType, ok := typeSpec.Type.(*ast.InterfaceType); ok {
+				if typeSpec, isType := spec.(*ast.TypeSpec); isType {
+					if interfaceType, isInterfaceType := typeSpec.Type.(*ast.InterfaceType); isInterfaceType {
 						interfaceCount += 1
 						g.IFaceFrom = g.FileSet.Position(interfaceType.Pos()).Line
 						g.IFaceTo = g.FileSet.Position(interfaceType.End()).Line
@@ -165,19 +165,19 @@ func (g *GoImplGenerator) parseMethods(f *ast.File) {
 
 			g.IFace.Methods = make([]*GoMethod, 0)
 			for _, spec := range genDeclaration.Specs {
-				if typeSpec, ok := spec.(*ast.TypeSpec); ok {
-					if interfaceType, ok := typeSpec.Type.(*ast.InterfaceType); ok {
+				if typeSpec, isType := spec.(*ast.TypeSpec); isType {
+					if interfaceType, isInterfaceType := typeSpec.Type.(*ast.InterfaceType); isInterfaceType {
 						g.IFace.StructName = typeSpec.Name.Name
-						for _, method := range interfaceType.Methods.List {
-							if funcType, ok := method.Type.(*ast.FuncType); ok {
-								if !method.Names[0].IsExported() {
-									logger.Log.Errorf("Method `%s` is not exported... quit.", method.Names[0].String())
+						for _, field := range interfaceType.Methods.List {
+							if funcType, isFuncType := field.Type.(*ast.FuncType); isFuncType {
+								if !field.Names[0].IsExported() {
+									logger.Log.Errorf("Method `%s` is not exported... quit.", field.Names[0].String())
 									os.Exit(-22)
 								}
 
 								method := &GoMethod{
-									Line: g.FileSet.Position(method.Names[0].Pos()).Line,
-									Name: method.Names[0].String(),
+									Line: g.FileSet.Position(field.Names[0].Pos()).Line,
+									Name: field.Names[0].String(),
 								}
 
 								if funcType.Params != nil {

@@ -7,7 +7,10 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/antlr/antlr4/runtime/Go/antlr"
+	selectListener "github.com/liupangzi/gpa/listener/select"
 	"github.com/liupangzi/gpa/logger"
+	selectParser "github.com/liupangzi/gpa/parser/select"
 )
 
 type BindvarsSelect struct {
@@ -20,23 +23,45 @@ type BindvarsSelect struct {
 	IsPointer bool
 	IsSlice   bool
 	Result    string
+	Limit     string
 }
 
 func RenderSelectTpl(goImplGenerator *GoImplGenerator, method *GoMethod) []byte {
 	tpl := `
 func (db *[[ .StructName ]]Impl) [[ .Method ]](ctx context.Context[[ .Params ]]) ([[ if .IsSlice ]][][[ end ]][[ if .IsPointer ]]*[[ end ]][[ .Result ]], error) {
-	var result [[ if .IsSlice ]][][[ end ]][[ if and .IsSlice .IsPointer ]]*[[ end ]][[ .Result ]]
-	err := db.DB.[[ if .IsSlice ]]Select[[ else ]]Get[[ end ]](&result, [[ .Statement ]][[ .Args ]])
-	return [[ if and .IsPointer (not .IsSlice) ]]&[[ end ]]result, err
+[[- if .IsSlice ]]
+	[[- if .Limit ]]
+	result := make([][[ if .IsPointer ]]*[[ end ]][[ .Result ]], 0, [[ .Limit ]])
+	[[- else ]]
+	var result [][[ if .IsPointer ]]*[[ end ]][[ .Result ]]
+	[[ end ]]
+	err := db.DB.Select(&result, [[ .Statement ]][[ .Args ]])
+	return result, err
+[[- else ]]
+	var result [[ .Result ]]
+	err := db.DB.Get(&result, [[ .Statement ]][[ .Args ]])
+	return [[ if .IsPointer ]]&[[ end ]]result, err
+[[- end ]]
 }
 
 func (tx *Tx[[ .StructName ]]Impl) [[ .Method ]](ctx context.Context[[ .Params ]]) ([[ if .IsSlice ]][][[ end ]][[ if .IsPointer ]]*[[ end ]][[ .Result ]], error) {
-	var result [[ if .IsSlice ]][][[ end ]][[ if and .IsSlice .IsPointer ]]*[[ end ]][[ .Result ]]
-	err := tx.TX.[[ if .IsSlice ]]Select[[ else ]]Get[[ end ]](&result, [[ .Statement ]][[ .Args ]])
-	return [[ if and .IsPointer (not .IsSlice) ]]&[[ end ]]result, err
+[[- if .IsSlice ]]
+	[[- if .Limit ]]
+	result := make([][[ if .IsPointer ]]*[[ end ]][[ .Result ]], 0, [[ .Limit ]])
+	[[- else ]]
+	var result [][[ if .IsPointer ]]*[[ end ]][[ .Result ]]
+	[[ end ]]
+	err := tx.TX.Select(&result, [[ .Statement ]][[ .Args ]])
+	return result, err
+[[- else ]]
+	var result [[ .Result ]]
+	err := tx.TX.Get(&result, [[ .Statement ]][[ .Args ]])
+	return [[ if .IsPointer ]]&[[ end ]]result, err
+[[- end ]]
 }
 `
-	var args, params strings.Builder
+	args, params := new(strings.Builder), new(strings.Builder)
+	allTypedNames := make([]string, 0)
 
 	for idx, param := range method.Params {
 		if idx == 0 {
@@ -44,11 +69,11 @@ func (tx *Tx[[ .StructName ]]Impl) [[ .Method ]](ctx context.Context[[ .Params ]
 		}
 
 		typedNames := make([]string, 0)
-
 		for _, name := range param.Names {
 			args.WriteString(", ")
 			args.WriteString(name.Name)
 			typedNames = append(typedNames, name.Name)
+			allTypedNames = append(allTypedNames, name.Name)
 		}
 
 		params.WriteString(", ")
@@ -80,15 +105,29 @@ func (tx *Tx[[ .StructName ]]Impl) [[ .Method ]](ctx context.Context[[ .Params ]
 		bindvarsSelect.Result = astType.(*ast.Ident).Name
 	}
 
-	t, err := template.New("selectTpl").Delims("[[", "]]").Parse(tpl)
-	if err != nil {
-		logger.Log.Errorf("init text/template err: %s", err.Error())
+	p := selectParser.NewSelectStatementParserParser(antlr.NewCommonTokenStream(selectParser.NewSelectStatementParserLexer(antlr.NewInputStream(method.DMLStatement[1:len(method.DMLStatement)-1])), antlr.TokenDefaultChannel))
+	p.BuildParseTrees = true
+	listener := selectListener.SelectListener{}
+	antlr.ParseTreeWalkerDefault.Walk(&listener, p.Statement())
+
+	// init slice with known cap
+	if listener.Limit != "" {
+		if listener.Limit == "?" {
+			bindvarsSelect.Limit = allTypedNames[len(allTypedNames)-1-listener.ReversedIndex]
+		} else {
+			bindvarsSelect.Limit = listener.Limit
+		}
+	}
+
+	t, tplErr := template.New("selectTpl").Delims("[[", "]]").Parse(tpl)
+	if tplErr != nil {
+		logger.Log.Errorf("init text/template tplErr: %s", tplErr.Error())
 		os.Exit(-31)
 	}
 
 	buf := &bytes.Buffer{}
-	if err := t.Execute(buf, bindvarsSelect); err != nil {
-		logger.Log.Errorf("render text/template err: %s", err.Error())
+	if tplExecuteErr := t.Execute(buf, bindvarsSelect); tplExecuteErr != nil {
+		logger.Log.Errorf("render text/template tplExecuteErr: %s", tplExecuteErr.Error())
 		os.Exit(-33)
 	}
 

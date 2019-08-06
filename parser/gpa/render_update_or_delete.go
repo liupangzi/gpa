@@ -56,15 +56,15 @@ func (tx *Tx[[ .StructName ]]Impl) [[ .Method ]](ctx context.Context[[ .Params ]
 		Params:     params.String(),
 	}
 
-	t, err := template.New("updateOrDeleteTpl").Delims("[[", "]]").Parse(tpl)
-	if err != nil {
-		logger.Log.Errorf("init text/template err: %s", err.Error())
+	t, tplErr := template.New("updateOrDeleteTpl").Delims("[[", "]]").Parse(tpl)
+	if tplErr != nil {
+		logger.Log.Errorf("init text/template tplErr: %s", tplErr.Error())
 		os.Exit(-30)
 	}
 
 	buf := &bytes.Buffer{}
-	if err := t.Execute(buf, bindvarsUpdate); err != nil {
-		logger.Log.Errorf("render text/template err: %s", err.Error())
+	if tplExecuteErr := t.Execute(buf, bindvarsUpdate); tplExecuteErr != nil {
+		logger.Log.Errorf("render text/template tplExecuteErr: %s", tplExecuteErr.Error())
 		os.Exit(-32)
 	}
 

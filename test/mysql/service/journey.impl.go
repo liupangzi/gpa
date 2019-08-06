@@ -117,37 +117,37 @@ func (tx *TxJourneyImpl) GetTicketByID(ctx context.Context, ID uint64) (*model.T
 }
 
 func (db *JourneyImpl) GetTicketsByCustomerID(ctx context.Context, customerID uint64) ([]*model.Ticket, error) {
-	var result []*model.Ticket
+	result := make([]*model.Ticket, 0, 10)
 	err := db.DB.Select(&result, "SELECT * FROM ticket WHERE customer_id = ? ORDER BY id DESC LIMIT 10", customerID)
 	return result, err
 }
 
 func (tx *TxJourneyImpl) GetTicketsByCustomerID(ctx context.Context, customerID uint64) ([]*model.Ticket, error) {
-	var result []*model.Ticket
+	result := make([]*model.Ticket, 0, 10)
 	err := tx.TX.Select(&result, "SELECT * FROM ticket WHERE customer_id = ? ORDER BY id DESC LIMIT 10", customerID)
 	return result, err
 }
 
 func (db *JourneyImpl) GetCustomersByNameAndEmail(ctx context.Context, name, email string, offset, limit uint64) ([]model.Customer, error) {
-	var result []model.Customer
+	result := make([]model.Customer, 0, limit)
 	err := db.DB.Select(&result, "SELECT * FROM customer WHERE name = ? AND email = ? LIMIT ?, ?", name, email, offset, limit)
 	return result, err
 }
 
 func (tx *TxJourneyImpl) GetCustomersByNameAndEmail(ctx context.Context, name, email string, offset, limit uint64) ([]model.Customer, error) {
-	var result []model.Customer
+	result := make([]model.Customer, 0, limit)
 	err := tx.TX.Select(&result, "SELECT * FROM customer WHERE name = ? AND email = ? LIMIT ?, ?", name, email, offset, limit)
 	return result, err
 }
 
 func (db *JourneyImpl) GetCustomerEmailsByName(ctx context.Context, name string) ([]string, error) {
-	var result []string
+	result := make([]string, 0, 3)
 	err := db.DB.Select(&result, "SELECT `email` FROM customer WHERE name = ? LIMIT 0, 3", name)
 	return result, err
 }
 
 func (tx *TxJourneyImpl) GetCustomerEmailsByName(ctx context.Context, name string) ([]string, error) {
-	var result []string
+	result := make([]string, 0, 3)
 	err := tx.TX.Select(&result, "SELECT `email` FROM customer WHERE name = ? LIMIT 0, 3", name)
 	return result, err
 }

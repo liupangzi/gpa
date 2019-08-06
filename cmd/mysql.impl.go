@@ -38,7 +38,7 @@ package [[ .Package ]]
 
 import (
 [[- range $path, $alias := .Imports ]]
-	[[ $alias ]] [[ $path -]]
+	[[ if $alias ]][[ $alias ]] [[ $path -]][[ else ]][[ $path -]][[ end -]]
 [[ end ]]
 	"github.com/jmoiron/sqlx"
 )
@@ -81,20 +81,20 @@ func Implement(s string) {
 	}
 	goImplGenerator.Parse()
 
-	t, err := template.New("MySQLImplement").
+	t, tplErr := template.New("MySQLImplement").
 		Delims("[[", "]]").
 		Funcs(template.FuncMap{
 			"base": path.Base,
 		}).
 		Parse(implementTemplate)
-	if err != nil {
-		logger.Log.Errorf("init text/template err: %s", err.Error())
+	if tplErr != nil {
+		logger.Log.Errorf("init text/template tplErr: %s", tplErr.Error())
 		os.Exit(-11)
 	}
 
 	buf := &bytes.Buffer{}
-	if err := t.Execute(buf, goImplGenerator); err != nil {
-		logger.Log.Errorf("render text/template err: %s", err.Error())
+	if tplExecuteErr := t.Execute(buf, goImplGenerator); tplExecuteErr != nil {
+		logger.Log.Errorf("render text/template tplExecuteErr: %s", tplExecuteErr.Error())
 		os.Exit(-12)
 	}
 
@@ -108,8 +108,8 @@ func Implement(s string) {
 		}
 	}
 
-	if err := ioutil.WriteFile(targetFile, buf.Bytes(), 0644); err != nil {
-		logger.Log.Errorf("dump file `%s` err: %s", targetFile, err.Error())
+	if writeFileErr := ioutil.WriteFile(targetFile, buf.Bytes(), 0644); writeFileErr != nil {
+		logger.Log.Errorf("dump file `%s` writeFileErr: %s", targetFile, writeFileErr.Error())
 		os.Exit(-13)
 	}
 }

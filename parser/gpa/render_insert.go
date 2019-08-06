@@ -40,7 +40,7 @@ func (tx *Tx[[ .StructName ]]Impl) [[ .Method ]](ctx context.Context, [[ .Param 
 `
 
 	if len(method.Params) != 2 {
-		logger.Log.Errorf("Params of method `%s` err", method.Name)
+		logger.Log.Errorf("Params of method `%s` tplExecuteErr", method.Name)
 		os.Exit(-34)
 	}
 
@@ -61,15 +61,15 @@ func (tx *Tx[[ .StructName ]]Impl) [[ .Method ]](ctx context.Context, [[ .Param 
 		bindvarsInsert.Param = method.Params[1].Names[0].Name + " *" + selector.X.(*ast.SelectorExpr).X.(*ast.Ident).Name + "." + selector.X.(*ast.SelectorExpr).Sel.Name
 	}
 
-	t, err := template.New("insertTpl").Delims("[[", "]]").Parse(tpl)
-	if err != nil {
-		logger.Log.Errorf("init text/template err: %s", err.Error())
+	t, tplErr := template.New("insertTpl").Delims("[[", "]]").Parse(tpl)
+	if tplErr != nil {
+		logger.Log.Errorf("init text/template tplErr: %s", tplErr.Error())
 		os.Exit(-35)
 	}
 
 	buf := &bytes.Buffer{}
-	if err := t.Execute(buf, bindvarsInsert); err != nil {
-		logger.Log.Errorf("render text/template err: %s", err.Error())
+	if tplExecuteErr := t.Execute(buf, bindvarsInsert); tplExecuteErr != nil {
+		logger.Log.Errorf("render text/template tplExecuteErr: %s", tplExecuteErr.Error())
 		os.Exit(-36)
 	}
 
