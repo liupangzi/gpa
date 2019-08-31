@@ -1,0 +1,12 @@
+At=1
+LeftParenthesis=2
+RightParenthesis=3
+Insert=4
+Select=5
+Update=6
+Delete=7
+Literal=8
+WS=9
+'@'=1
+'('=2
+')'=3
