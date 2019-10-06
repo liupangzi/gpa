@@ -40,19 +40,19 @@ func (tx *TxJourneyImpl) Rollback(ctx context.Context) error {
 }
 
 func (db *JourneyImpl) AddCustomer(ctx context.Context, c model.Customer) (sql.Result, error) {
-	return db.DB.NamedExecContext(ctx, fmt.Sprintf("INSERT INTO %s (`card_id`, `order`, `id`, `member_id`, `email`, `name`, `address`, `create_time`, `update_time`) VALUES (:card_id, :order, :id, :member_id, :email, :name, :address, :create_time, :update_time)", c.TableName()), &c)
+	return db.DB.NamedExecContext(ctx, fmt.Sprintf("INSERT INTO %s (`card_id`, `order`, `member_id`, `id`, `email`, `name`, `address`, `create_time`, `update_time`) VALUES (:card_id, :order, :member_id, :id, :email, :name, :address, :create_time, :update_time)", c.TableName()), &c)
 }
 
 func (tx *TxJourneyImpl) AddCustomer(ctx context.Context, c model.Customer) (sql.Result, error) {
-	return tx.TX.NamedExecContext(ctx, fmt.Sprintf("INSERT INTO %s (`card_id`, `order`, `id`, `member_id`, `email`, `name`, `address`, `create_time`, `update_time`) VALUES (:card_id, :order, :id, :member_id, :email, :name, :address, :create_time, :update_time)", c.TableName()), &c)
+	return tx.TX.NamedExecContext(ctx, fmt.Sprintf("INSERT INTO %s (`card_id`, `order`, `member_id`, `id`, `email`, `name`, `address`, `create_time`, `update_time`) VALUES (:card_id, :order, :member_id, :id, :email, :name, :address, :create_time, :update_time)", c.TableName()), &c)
 }
 
 func (db *JourneyImpl) AddTicket(ctx context.Context, t *another_model.Ticket) (sql.Result, error) {
-	return db.DB.NamedExecContext(ctx, fmt.Sprintf("INSERT INTO %s (`from`, `duration`, `customer_id`, `id`, `price`, `meal`, `to`, `operation`, `secret_key`, `climate`, `tea`, `token`, `create_time`, `update_time`) VALUES (:from, :duration, :customer_id, :id, :price, :meal, :to, :operation, :secret_key, :climate, :tea, :token, :create_time, :update_time)", t.TableName()), t)
+	return db.DB.NamedExecContext(ctx, fmt.Sprintf("INSERT INTO %s (`from`, `duration`, `to`, `customer_id`, `id`, `operation`, `secret_key`, `price`, `meal`, `climate`, `tea`, `token`, `create_time`, `update_time`) VALUES (:from, :duration, :to, :customer_id, :id, :operation, :secret_key, :price, :meal, :climate, :tea, :token, :create_time, :update_time)", t.TableName()), t)
 }
 
 func (tx *TxJourneyImpl) AddTicket(ctx context.Context, t *another_model.Ticket) (sql.Result, error) {
-	return tx.TX.NamedExecContext(ctx, fmt.Sprintf("INSERT INTO %s (`from`, `duration`, `customer_id`, `id`, `price`, `meal`, `to`, `operation`, `secret_key`, `climate`, `tea`, `token`, `create_time`, `update_time`) VALUES (:from, :duration, :customer_id, :id, :price, :meal, :to, :operation, :secret_key, :climate, :tea, :token, :create_time, :update_time)", t.TableName()), t)
+	return tx.TX.NamedExecContext(ctx, fmt.Sprintf("INSERT INTO %s (`from`, `duration`, `to`, `customer_id`, `id`, `operation`, `secret_key`, `price`, `meal`, `climate`, `tea`, `token`, `create_time`, `update_time`) VALUES (:from, :duration, :to, :customer_id, :id, :operation, :secret_key, :price, :meal, :climate, :tea, :token, :create_time, :update_time)", t.TableName()), t)
 }
 
 func (db *JourneyImpl) UpdateCustomerNameByEmail(ctx context.Context, name, email string) (sql.Result, error) {

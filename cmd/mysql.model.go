@@ -14,7 +14,6 @@ import (
 	"unsafe"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
-	"github.com/go-sql-driver/mysql"
 	"github.com/iancoleman/strcase"
 	listener "github.com/liupangzi/gpa/listener/ddl"
 	"github.com/liupangzi/gpa/logger"
@@ -216,8 +215,8 @@ func processTypes(l *listener.CreateTableListener) {
 						d.Size = unsafe.Sizeof(int32(0))
 					}
 				} else {
-					d.Type = "sql.NullInt64"
-					d.Size = unsafe.Sizeof(sql.NullInt64{})
+					d.Type = "sql.NullInt32"
+					d.Size = unsafe.Sizeof(sql.NullInt32{})
 				}
 			} else if d.SQLType == "bigint" {
 				if d.NotNull {
@@ -282,8 +281,8 @@ func processTypes(l *listener.CreateTableListener) {
 					d.Type = "time.Time"
 					d.Size = unsafe.Sizeof(time.Time{})
 				} else {
-					d.Type = "mysql.NullTime"
-					d.Size = unsafe.Sizeof(mysql.NullTime{})
+					d.Type = "sql.NullTime"
+					d.Size = unsafe.Sizeof(sql.NullTime{})
 				}
 			} else if d.SQLType == "binary" ||
 				d.SQLType == "varbinary" ||
@@ -312,15 +311,10 @@ func processImports(l *listener.CreateTableListener) {
 					importMapping["time"] = true
 					imports = append(imports, "time")
 				}
-			} else if strings.HasPrefix(definition.Type, "sql.Null") {
+			} else if strings.HasPrefix(definition.Type, "sql") {
 				if _, exists := importMapping["database/sql"]; !exists {
 					importMapping["database/sql"] = true
 					imports = append(imports, "database/sql")
-				}
-			} else if definition.Type == "mysql.NullTime" {
-				if _, exists := importMapping["github.com/go-sql-driver/mysql"]; !exists {
-					importMapping["github.com/go-sql-driver/mysql"] = true
-					imports = append(imports, "github.com/go-sql-driver/mysql")
 				}
 			}
 		}

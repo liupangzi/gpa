@@ -31,15 +31,15 @@ func RenderNamedUpdateTpl(goImplGenerator *gpaparser.Parser, method *gpaparser.G
 	tpl := `
 func (db *[[ .StructName ]]Impl) [[ .Method ]](ctx context.Context, [[ .Param ]]) (sql.Result, error) {
 	[[- if .IsInQuery ]]
-    query, args, namedErr := sqlx.Named([[ .Statement ]], [[ .Arg ]])
-    if namedErr != nil {
+	query, args, namedErr := sqlx.Named([[ .Statement ]], [[ .Arg ]])
+	if namedErr != nil {
 		return nil, namedErr
-    }
+	}
 
-    query, args, inErr := sqlx.In(query, args...)
-    if inErr != nil {
+	query, args, inErr := sqlx.In(query, args...)
+	if inErr != nil {
 		return nil, inErr
-    }
+	}
 
 	return db.DB.ExecContext(ctx, db.DB.Rebind(query), args...)
 	[[- else ]]
@@ -49,15 +49,15 @@ func (db *[[ .StructName ]]Impl) [[ .Method ]](ctx context.Context, [[ .Param ]]
 
 func (tx *Tx[[ .StructName ]]Impl) [[ .Method ]](ctx context.Context, [[ .Param ]]) (sql.Result, error) {
 	[[- if .IsInQuery ]]
-    query, args, namedErr := sqlx.Named([[ .Statement ]], [[ .Arg ]])
-    if namedErr != nil {
+	query, args, namedErr := sqlx.Named([[ .Statement ]], [[ .Arg ]])
+	if namedErr != nil {
 		return nil, namedErr
-    }
+	}
 
-    query, args, inErr := sqlx.In(query, args...)
-    if inErr != nil {
+	query, args, inErr := sqlx.In(query, args...)
+	if inErr != nil {
 		return nil, inErr
-    }
+	}
 
 	return tx.TX.ExecContext(ctx, tx.TX.Rebind(query), args...)
 	[[- else ]]

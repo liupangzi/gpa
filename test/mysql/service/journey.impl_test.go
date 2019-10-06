@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/go-sql-driver/mysql"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"github.com/liupangzi/gpa/test/mysql/another_model"
 	model "github.com/liupangzi/gpa/test/mysql/model"
@@ -77,12 +77,12 @@ func (s *JourneySuite) TestAddCustomer() {
 		customer := model.Customer{
 			CardId:     int16(faker.RandomInt(-32768, 32767)),
 			Order:      int32(faker.RandomInt(-2147483648, 2147483647)),
-			MemberId:   sql.NullInt64{},
+			MemberId:   sql.NullInt32{},
 			Email:      faker.Internet().Email(),
 			Name:       faker.Name().Name(),
 			Address:    sql.NullString{},
 			CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-			UpdateTime: mysql.NullTime{
+			UpdateTime: sql.NullTime{
 				Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 				Valid: true,
 			},
@@ -121,7 +121,7 @@ func (s *JourneySuite) TestAddTicket() {
 				Int64: 12,
 				Valid: true,
 			},
-			To:        sql.NullInt64{},
+			To:        sql.NullInt32{},
 			Operation: []byte{1, 2, 3, 4, 5},
 			SecretKey: []byte{6, 7, 8, 9, 10},
 			Climate: sql.NullString{
@@ -130,7 +130,7 @@ func (s *JourneySuite) TestAddTicket() {
 			},
 			Tea:        sql.NullString{},
 			CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-			UpdateTime: mysql.NullTime{
+			UpdateTime: sql.NullTime{
 				Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 				Valid: true,
 			},
@@ -165,8 +165,8 @@ func (s *JourneySuite) TestAddTicket() {
 				Valid:   true,
 			},
 			Meal: sql.NullInt64{},
-			To: sql.NullInt64{
-				Int64: 1024,
+			To: sql.NullInt32{
+				Int32: 1024,
 				Valid: true,
 			},
 			Operation: []byte{10, 20, 30, 40, 50},
@@ -177,7 +177,7 @@ func (s *JourneySuite) TestAddTicket() {
 			},
 			Climate:    sql.NullString{},
 			CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-			UpdateTime: mysql.NullTime{
+			UpdateTime: sql.NullTime{
 				Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 				Valid: true,
 			},
@@ -212,12 +212,12 @@ func (s *JourneySuite) TestUpdateCustomerNameByEmail() {
 		customer := model.Customer{
 			CardId:     int16(faker.RandomInt(-32768, 32767)),
 			Order:      int32(faker.RandomInt(-2147483648, 2147483647)),
-			MemberId:   sql.NullInt64{},
+			MemberId:   sql.NullInt32{},
 			Email:      email,
 			Name:       faker.Name().String(),
 			Address:    sql.NullString{},
 			CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-			UpdateTime: mysql.NullTime{
+			UpdateTime: sql.NullTime{
 				Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 				Valid: true,
 			},
@@ -254,12 +254,12 @@ func (s *JourneySuite) TestUpdateCustomerNameByIDList() {
 				Id:         1,
 				CardId:     int16(faker.RandomInt(-32768, 32767)),
 				Order:      int32(faker.RandomInt(-2147483648, 2147483647)),
-				MemberId:   sql.NullInt64{},
+				MemberId:   sql.NullInt32{},
 				Email:      "i@liuchao.me",
 				Name:       "foo",
 				Address:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -279,12 +279,12 @@ func (s *JourneySuite) TestUpdateCustomerNameByIDList() {
 				Id:         2,
 				CardId:     int16(faker.RandomInt(-32768, 32767)),
 				Order:      int32(faker.RandomInt(-2147483648, 2147483647)),
-				MemberId:   sql.NullInt64{},
+				MemberId:   sql.NullInt32{},
 				Email:      "me@example.com",
 				Name:       "bar",
 				Address:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -326,8 +326,8 @@ func (s *JourneySuite) TestDeleteCustomerByID() {
 			CardId: int16(faker.RandomInt(-32768, 32767)),
 			Order:  int32(faker.RandomInt(-2147483648, 2147483647)),
 			Id:     ID,
-			MemberId: sql.NullInt64{
-				Int64: faker.RandomInt64(1, 3344565),
+			MemberId: sql.NullInt32{
+				Int32: int32(faker.RandomInt(1, 3344565)),
 				Valid: true,
 			},
 			Email: faker.Internet().Email(),
@@ -337,7 +337,7 @@ func (s *JourneySuite) TestDeleteCustomerByID() {
 				Valid:  true,
 			},
 			CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-			UpdateTime: mysql.NullTime{
+			UpdateTime: sql.NullTime{
 				Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 				Valid: true,
 			},
@@ -373,8 +373,8 @@ func (s *JourneySuite) TestDeleteCustomerByIDList() {
 				CardId: int16(faker.RandomInt(-32768, 32767)),
 				Order:  int32(faker.RandomInt(-2147483648, 2147483647)),
 				Id:     100,
-				MemberId: sql.NullInt64{
-					Int64: faker.RandomInt64(1, 3344565),
+				MemberId: sql.NullInt32{
+					Int32: int32(faker.RandomInt(1, 3344565)),
 					Valid: true,
 				},
 				Email: faker.Internet().Email(),
@@ -384,7 +384,7 @@ func (s *JourneySuite) TestDeleteCustomerByIDList() {
 					Valid:  true,
 				},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -404,8 +404,8 @@ func (s *JourneySuite) TestDeleteCustomerByIDList() {
 				CardId: int16(faker.RandomInt(-32768, 32767)),
 				Order:  int32(faker.RandomInt(-2147483648, 2147483647)),
 				Id:     101,
-				MemberId: sql.NullInt64{
-					Int64: faker.RandomInt64(1, 3344565),
+				MemberId: sql.NullInt32{
+					Int32: int32(faker.RandomInt(1, 3344565)),
 					Valid: true,
 				},
 				Email: faker.Internet().Email(),
@@ -415,7 +415,7 @@ func (s *JourneySuite) TestDeleteCustomerByIDList() {
 					Valid:  true,
 				},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -435,8 +435,8 @@ func (s *JourneySuite) TestDeleteCustomerByIDList() {
 				CardId: int16(faker.RandomInt(-32768, 32767)),
 				Order:  int32(faker.RandomInt(-2147483648, 2147483647)),
 				Id:     1,
-				MemberId: sql.NullInt64{
-					Int64: faker.RandomInt64(1, 3344565),
+				MemberId: sql.NullInt32{
+					Int32: int32(faker.RandomInt(1, 3344565)),
 					Valid: true,
 				},
 				Email: faker.Internet().Email(),
@@ -446,7 +446,7 @@ func (s *JourneySuite) TestDeleteCustomerByIDList() {
 					Valid:  true,
 				},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -485,12 +485,12 @@ func (s *JourneySuite) TestGetCustomerByID() {
 		customer := model.Customer{
 			CardId:     int16(faker.RandomInt(-32768, 32767)),
 			Order:      int32(faker.RandomInt(-2147483648, 2147483647)),
-			MemberId:   sql.NullInt64{},
+			MemberId:   sql.NullInt32{},
 			Email:      faker.Internet().Email(),
 			Name:       faker.Name().Name(),
 			Address:    sql.NullString{},
 			CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-			UpdateTime: mysql.NullTime{
+			UpdateTime: sql.NullTime{
 				Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 				Valid: true,
 			},
@@ -529,8 +529,8 @@ func (s *JourneySuite) TestGetTicketByID() {
 				Valid:   true,
 			},
 			Meal: sql.NullInt64{},
-			To: sql.NullInt64{
-				Int64: 1024,
+			To: sql.NullInt32{
+				Int32: 1024,
 				Valid: true,
 			},
 			Operation: []byte{100, 200, 102, 140, 150},
@@ -541,7 +541,7 @@ func (s *JourneySuite) TestGetTicketByID() {
 			},
 			Climate:    sql.NullString{},
 			CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-			UpdateTime: mysql.NullTime{
+			UpdateTime: sql.NullTime{
 				Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 				Valid: true,
 			},
@@ -583,8 +583,8 @@ func (s *JourneySuite) TestGetTicketsByCustomerID() {
 					Valid:   true,
 				},
 				Meal: sql.NullInt64{},
-				To: sql.NullInt64{
-					Int64: 1024,
+				To: sql.NullInt32{
+					Int32: 1024,
 					Valid: true,
 				},
 				Operation: []byte{100, 200, 102, 140, 150},
@@ -595,7 +595,7 @@ func (s *JourneySuite) TestGetTicketsByCustomerID() {
 				},
 				Climate:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -626,8 +626,8 @@ func (s *JourneySuite) TestGetTicketsByCustomerID() {
 					Valid:   true,
 				},
 				Meal: sql.NullInt64{},
-				To: sql.NullInt64{
-					Int64: 1024,
+				To: sql.NullInt32{
+					Int32: 1024,
 					Valid: true,
 				},
 				Operation: []byte{100, 200, 102, 140, 150},
@@ -638,7 +638,7 @@ func (s *JourneySuite) TestGetTicketsByCustomerID() {
 				},
 				Climate:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -678,12 +678,12 @@ func (s *JourneySuite) TestGetCustomersByNameAndEmail() {
 			customer := model.Customer{
 				CardId:     int16(faker.RandomInt(-32768, 32767)),
 				Order:      -32,
-				MemberId:   sql.NullInt64{},
+				MemberId:   sql.NullInt32{},
 				Email:      email,
 				Name:       name,
 				Address:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -708,12 +708,12 @@ func (s *JourneySuite) TestGetCustomersByNameAndEmail() {
 			customer := model.Customer{
 				CardId:     int16(faker.RandomInt(-32768, 32767)),
 				Order:      -16,
-				MemberId:   sql.NullInt64{},
+				MemberId:   sql.NullInt32{},
 				Email:      faker.Internet().Email(),
 				Name:       faker.Name().String(),
 				Address:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -738,12 +738,12 @@ func (s *JourneySuite) TestGetCustomersByNameAndEmail() {
 			customer := model.Customer{
 				CardId:     int16(faker.RandomInt(-32768, 32767)),
 				Order:      -8,
-				MemberId:   sql.NullInt64{},
+				MemberId:   sql.NullInt32{},
 				Email:      email,
 				Name:       name,
 				Address:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -783,12 +783,12 @@ func (s *JourneySuite) TestGetCustomerEmailsByName() {
 			customer := model.Customer{
 				CardId:     int16(faker.RandomInt(-32768, 32767)),
 				Order:      int32(faker.RandomInt(-2147483648, 2147483647)),
-				MemberId:   sql.NullInt64{},
+				MemberId:   sql.NullInt32{},
 				Email:      email1,
 				Name:       name,
 				Address:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -813,12 +813,12 @@ func (s *JourneySuite) TestGetCustomerEmailsByName() {
 			customer := model.Customer{
 				CardId:     int16(faker.RandomInt(-32768, 32767)),
 				Order:      int32(faker.RandomInt(-2147483648, 2147483647)),
-				MemberId:   sql.NullInt64{},
+				MemberId:   sql.NullInt32{},
 				Email:      faker.Internet().Email(),
 				Name:       faker.Name().String(),
 				Address:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -843,12 +843,12 @@ func (s *JourneySuite) TestGetCustomerEmailsByName() {
 			customer := model.Customer{
 				CardId:     int16(faker.RandomInt(-32768, 32767)),
 				Order:      int32(faker.RandomInt(-2147483648, 2147483647)),
-				MemberId:   sql.NullInt64{},
+				MemberId:   sql.NullInt32{},
 				Email:      email2,
 				Name:       name,
 				Address:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -887,12 +887,12 @@ func (s *JourneySuite) TestGetCustomerNameByEmail() {
 		customer := model.Customer{
 			CardId:     int16(faker.RandomInt(-32768, 32767)),
 			Order:      int32(faker.RandomInt(-2147483648, 2147483647)),
-			MemberId:   sql.NullInt64{},
+			MemberId:   sql.NullInt32{},
 			Email:      email,
 			Name:       name,
 			Address:    sql.NullString{},
 			CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-			UpdateTime: mysql.NullTime{
+			UpdateTime: sql.NullTime{
 				Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 				Valid: true,
 			},
@@ -931,8 +931,8 @@ func (s *JourneySuite) TestGetFirstFreeTicket() {
 					Valid:   true,
 				},
 				Meal: sql.NullInt64{},
-				To: sql.NullInt64{
-					Int64: 1024,
+				To: sql.NullInt32{
+					Int32: 1024,
 					Valid: true,
 				},
 				Operation: []byte{100, 200, 102, 140, 150},
@@ -943,7 +943,7 @@ func (s *JourneySuite) TestGetFirstFreeTicket() {
 				},
 				Climate:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -969,8 +969,8 @@ func (s *JourneySuite) TestGetFirstFreeTicket() {
 					Valid:   true,
 				},
 				Meal: sql.NullInt64{},
-				To: sql.NullInt64{
-					Int64: 1024,
+				To: sql.NullInt32{
+					Int32: 1024,
 					Valid: true,
 				},
 				Operation: []byte{100, 200, 102, 140, 150},
@@ -981,7 +981,7 @@ func (s *JourneySuite) TestGetFirstFreeTicket() {
 				},
 				Climate:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -1003,8 +1003,8 @@ func (s *JourneySuite) TestGetFirstFreeTicket() {
 				Duration:   float64(faker.RandomInt(1, 1024000)),
 				CustomerId: uint64(faker.RandomInt(1, 1024000)),
 				Meal:       sql.NullInt64{},
-				To: sql.NullInt64{
-					Int64: 1024,
+				To: sql.NullInt32{
+					Int32: 1024,
 					Valid: true,
 				},
 				Operation: []byte{100, 200, 102, 140, 150},
@@ -1015,7 +1015,7 @@ func (s *JourneySuite) TestGetFirstFreeTicket() {
 				},
 				Climate:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -1055,8 +1055,8 @@ func (s *JourneySuite) TestGetTicketsByIDListAndPrice() {
 					Valid:   true,
 				},
 				Meal: sql.NullInt64{},
-				To: sql.NullInt64{
-					Int64: 1024,
+				To: sql.NullInt32{
+					Int32: 1024,
 					Valid: true,
 				},
 				Operation: []byte{100, 200, 102, 140, 150},
@@ -1067,7 +1067,7 @@ func (s *JourneySuite) TestGetTicketsByIDListAndPrice() {
 				},
 				Climate:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -1093,8 +1093,8 @@ func (s *JourneySuite) TestGetTicketsByIDListAndPrice() {
 					Valid:   true,
 				},
 				Meal: sql.NullInt64{},
-				To: sql.NullInt64{
-					Int64: 1024,
+				To: sql.NullInt32{
+					Int32: 1024,
 					Valid: true,
 				},
 				Operation: []byte{100, 200, 102, 140, 150},
@@ -1105,7 +1105,7 @@ func (s *JourneySuite) TestGetTicketsByIDListAndPrice() {
 				},
 				Climate:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -1127,8 +1127,8 @@ func (s *JourneySuite) TestGetTicketsByIDListAndPrice() {
 				Duration:   float64(faker.RandomInt(1, 1024000)),
 				CustomerId: uint64(faker.RandomInt(1, 1024000)),
 				Meal:       sql.NullInt64{},
-				To: sql.NullInt64{
-					Int64: 1024,
+				To: sql.NullInt32{
+					Int32: 1024,
 					Valid: true,
 				},
 				Operation: []byte{100, 200, 102, 140, 150},
@@ -1139,7 +1139,7 @@ func (s *JourneySuite) TestGetTicketsByIDListAndPrice() {
 				},
 				Climate:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -1177,8 +1177,8 @@ func (s *JourneySuite) TestGetTicketsLikeTea() {
 				Duration:   float64(faker.RandomInt(1, 1024000)),
 				CustomerId: uint64(faker.RandomInt(1, 1024000)),
 				Meal:       sql.NullInt64{},
-				To: sql.NullInt64{
-					Int64: 1024,
+				To: sql.NullInt32{
+					Int32: 1024,
 					Valid: true,
 				},
 				Operation: []byte{100, 200, 102, 140, 150},
@@ -1189,7 +1189,7 @@ func (s *JourneySuite) TestGetTicketsLikeTea() {
 				},
 				Climate:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -1211,8 +1211,8 @@ func (s *JourneySuite) TestGetTicketsLikeTea() {
 				Duration:   float64(faker.RandomInt(1, 1024000)),
 				CustomerId: uint64(faker.RandomInt(1, 1024000)),
 				Meal:       sql.NullInt64{},
-				To: sql.NullInt64{
-					Int64: 1024,
+				To: sql.NullInt32{
+					Int32: 1024,
 					Valid: true,
 				},
 				Operation: []byte{100, 200, 102, 140, 150},
@@ -1223,7 +1223,7 @@ func (s *JourneySuite) TestGetTicketsLikeTea() {
 				},
 				Climate:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -1245,8 +1245,8 @@ func (s *JourneySuite) TestGetTicketsLikeTea() {
 				Duration:   float64(faker.RandomInt(1, 1024000)),
 				CustomerId: uint64(faker.RandomInt(1, 1024000)),
 				Meal:       sql.NullInt64{},
-				To: sql.NullInt64{
-					Int64: 1024,
+				To: sql.NullInt32{
+					Int32: 1024,
 					Valid: true,
 				},
 				Operation: []byte{100, 200, 102, 140, 150},
@@ -1257,7 +1257,7 @@ func (s *JourneySuite) TestGetTicketsLikeTea() {
 				},
 				Climate:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -1279,8 +1279,8 @@ func (s *JourneySuite) TestGetTicketsLikeTea() {
 				Duration:   float64(faker.RandomInt(1, 1024000)),
 				CustomerId: uint64(faker.RandomInt(1, 1024000)),
 				Meal:       sql.NullInt64{},
-				To: sql.NullInt64{
-					Int64: 1024,
+				To: sql.NullInt32{
+					Int32: 1024,
 					Valid: true,
 				},
 				Operation: []byte{100, 200, 102, 140, 150},
@@ -1291,7 +1291,7 @@ func (s *JourneySuite) TestGetTicketsLikeTea() {
 				},
 				Climate:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -1365,8 +1365,8 @@ func (s *JourneySuite) TestGetTicketsByOffset() {
 				Duration:   float64(faker.RandomInt(1, 1024000)),
 				CustomerId: uint64(faker.RandomInt(1, 1024000)),
 				Meal:       sql.NullInt64{},
-				To: sql.NullInt64{
-					Int64: 1024,
+				To: sql.NullInt32{
+					Int32: 1024,
 					Valid: true,
 				},
 				Operation: []byte{100, 200, 102, 140, 150},
@@ -1377,7 +1377,7 @@ func (s *JourneySuite) TestGetTicketsByOffset() {
 				},
 				Climate:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -1399,8 +1399,8 @@ func (s *JourneySuite) TestGetTicketsByOffset() {
 				Duration:   float64(faker.RandomInt(1, 1024000)),
 				CustomerId: uint64(faker.RandomInt(1, 1024000)),
 				Meal:       sql.NullInt64{},
-				To: sql.NullInt64{
-					Int64: 1024,
+				To: sql.NullInt32{
+					Int32: 1024,
 					Valid: true,
 				},
 				Operation: []byte{100, 200, 102, 140, 150},
@@ -1411,7 +1411,7 @@ func (s *JourneySuite) TestGetTicketsByOffset() {
 				},
 				Climate:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -1433,8 +1433,8 @@ func (s *JourneySuite) TestGetTicketsByOffset() {
 				Duration:   float64(faker.RandomInt(1, 1024000)),
 				CustomerId: uint64(faker.RandomInt(1, 1024000)),
 				Meal:       sql.NullInt64{},
-				To: sql.NullInt64{
-					Int64: 1024,
+				To: sql.NullInt32{
+					Int32: 1024,
 					Valid: true,
 				},
 				Operation: []byte{100, 200, 102, 140, 150},
@@ -1445,7 +1445,7 @@ func (s *JourneySuite) TestGetTicketsByOffset() {
 				},
 				Climate:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -1467,8 +1467,8 @@ func (s *JourneySuite) TestGetTicketsByOffset() {
 				Duration:   float64(faker.RandomInt(1, 1024000)),
 				CustomerId: uint64(faker.RandomInt(1, 1024000)),
 				Meal:       sql.NullInt64{},
-				To: sql.NullInt64{
-					Int64: 1024,
+				To: sql.NullInt32{
+					Int32: 1024,
 					Valid: true,
 				},
 				Operation: []byte{100, 200, 102, 140, 150},
@@ -1479,7 +1479,7 @@ func (s *JourneySuite) TestGetTicketsByOffset() {
 				},
 				Climate:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -1557,8 +1557,8 @@ func (s *JourneySuite) TestGetTicketsByFrom() {
 				Duration:   float64(faker.RandomInt(1, 1024000)),
 				CustomerId: uint64(faker.RandomInt(1, 1024000)),
 				Meal:       sql.NullInt64{},
-				To: sql.NullInt64{
-					Int64: 1024,
+				To: sql.NullInt32{
+					Int32: 1024,
 					Valid: true,
 				},
 				Operation: []byte{100, 200, 102, 140, 150},
@@ -1569,7 +1569,7 @@ func (s *JourneySuite) TestGetTicketsByFrom() {
 				},
 				Climate:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -1591,8 +1591,8 @@ func (s *JourneySuite) TestGetTicketsByFrom() {
 				Duration:   float64(faker.RandomInt(1, 1024000)),
 				CustomerId: uint64(faker.RandomInt(1, 1024000)),
 				Meal:       sql.NullInt64{},
-				To: sql.NullInt64{
-					Int64: 1024,
+				To: sql.NullInt32{
+					Int32: 1024,
 					Valid: true,
 				},
 				Operation: []byte{100, 200, 102, 140, 150},
@@ -1603,7 +1603,7 @@ func (s *JourneySuite) TestGetTicketsByFrom() {
 				},
 				Climate:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -1625,8 +1625,8 @@ func (s *JourneySuite) TestGetTicketsByFrom() {
 				Duration:   float64(faker.RandomInt(1, 1024000)),
 				CustomerId: uint64(faker.RandomInt(1, 1024000)),
 				Meal:       sql.NullInt64{},
-				To: sql.NullInt64{
-					Int64: 1024,
+				To: sql.NullInt32{
+					Int32: 1024,
 					Valid: true,
 				},
 				Operation: []byte{100, 200, 102, 140, 150},
@@ -1637,7 +1637,7 @@ func (s *JourneySuite) TestGetTicketsByFrom() {
 				},
 				Climate:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -1659,8 +1659,8 @@ func (s *JourneySuite) TestGetTicketsByFrom() {
 				Duration:   float64(faker.RandomInt(1, 1024000)),
 				CustomerId: uint64(faker.RandomInt(1, 1024000)),
 				Meal:       sql.NullInt64{},
-				To: sql.NullInt64{
-					Int64: 1024,
+				To: sql.NullInt32{
+					Int32: 1024,
 					Valid: true,
 				},
 				Operation: []byte{100, 200, 102, 140, 150},
@@ -1671,7 +1671,7 @@ func (s *JourneySuite) TestGetTicketsByFrom() {
 				},
 				Climate:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -1708,8 +1708,8 @@ func (s *JourneySuite) TestGetTicketWhichTokenIsNotEqualTo() {
 				Duration:   float64(faker.RandomInt(1, 1024000)),
 				CustomerId: uint64(faker.RandomInt(1, 1024000)),
 				Meal:       sql.NullInt64{},
-				To: sql.NullInt64{
-					Int64: 1024,
+				To: sql.NullInt32{
+					Int32: 1024,
 					Valid: true,
 				},
 				Price: sql.NullFloat64{
@@ -1724,7 +1724,7 @@ func (s *JourneySuite) TestGetTicketWhichTokenIsNotEqualTo() {
 				},
 				Climate:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -1750,8 +1750,8 @@ func (s *JourneySuite) TestGetTicketWhichTokenIsNotEqualTo() {
 					Float64: 90.21,
 					Valid:   true,
 				},
-				To: sql.NullInt64{
-					Int64: 1024,
+				To: sql.NullInt32{
+					Int32: 1024,
 					Valid: true,
 				},
 				Operation: []byte{100, 200, 102, 140, 150},
@@ -1762,7 +1762,7 @@ func (s *JourneySuite) TestGetTicketWhichTokenIsNotEqualTo() {
 				},
 				Climate:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -1788,8 +1788,8 @@ func (s *JourneySuite) TestGetTicketWhichTokenIsNotEqualTo() {
 					Float64: 102.03,
 					Valid:   true,
 				},
-				To: sql.NullInt64{
-					Int64: 1024,
+				To: sql.NullInt32{
+					Int32: 1024,
 					Valid: true,
 				},
 				Operation: []byte{100, 200, 102, 140, 150},
@@ -1800,7 +1800,7 @@ func (s *JourneySuite) TestGetTicketWhichTokenIsNotEqualTo() {
 				},
 				Climate:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -1822,8 +1822,8 @@ func (s *JourneySuite) TestGetTicketWhichTokenIsNotEqualTo() {
 				Duration:   float64(faker.RandomInt(1, 1024000)),
 				CustomerId: uint64(faker.RandomInt(1, 1024000)),
 				Meal:       sql.NullInt64{},
-				To: sql.NullInt64{
-					Int64: 1024,
+				To: sql.NullInt32{
+					Int32: 1024,
 					Valid: true,
 				},
 				Price: sql.NullFloat64{
@@ -1838,7 +1838,7 @@ func (s *JourneySuite) TestGetTicketWhichTokenIsNotEqualTo() {
 				},
 				Climate:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -1877,8 +1877,8 @@ func (s *JourneySuite) TestGetTicketGreaterThanPrice() {
 				Duration:   float64(faker.RandomInt(1, 1024000)),
 				CustomerId: uint64(faker.RandomInt(1, 1024000)),
 				Meal:       sql.NullInt64{},
-				To: sql.NullInt64{
-					Int64: 1024,
+				To: sql.NullInt32{
+					Int32: 1024,
 					Valid: true,
 				},
 				Price: sql.NullFloat64{
@@ -1893,7 +1893,7 @@ func (s *JourneySuite) TestGetTicketGreaterThanPrice() {
 				},
 				Climate:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -1919,8 +1919,8 @@ func (s *JourneySuite) TestGetTicketGreaterThanPrice() {
 					Float64: 90.21,
 					Valid:   true,
 				},
-				To: sql.NullInt64{
-					Int64: 1024,
+				To: sql.NullInt32{
+					Int32: 1024,
 					Valid: true,
 				},
 				Operation: []byte{100, 200, 102, 140, 150},
@@ -1931,7 +1931,7 @@ func (s *JourneySuite) TestGetTicketGreaterThanPrice() {
 				},
 				Climate:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -1957,8 +1957,8 @@ func (s *JourneySuite) TestGetTicketGreaterThanPrice() {
 					Float64: 102.03,
 					Valid:   true,
 				},
-				To: sql.NullInt64{
-					Int64: 1024,
+				To: sql.NullInt32{
+					Int32: 1024,
 					Valid: true,
 				},
 				Operation: []byte{100, 200, 102, 140, 150},
@@ -1969,7 +1969,7 @@ func (s *JourneySuite) TestGetTicketGreaterThanPrice() {
 				},
 				Climate:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -1991,8 +1991,8 @@ func (s *JourneySuite) TestGetTicketGreaterThanPrice() {
 				Duration:   float64(faker.RandomInt(1, 1024000)),
 				CustomerId: uint64(faker.RandomInt(1, 1024000)),
 				Meal:       sql.NullInt64{},
-				To: sql.NullInt64{
-					Int64: 1024,
+				To: sql.NullInt32{
+					Int32: 1024,
 					Valid: true,
 				},
 				Price: sql.NullFloat64{
@@ -2007,7 +2007,7 @@ func (s *JourneySuite) TestGetTicketGreaterThanPrice() {
 				},
 				Climate:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -2045,12 +2045,12 @@ func (s *JourneySuite) TestUpdateCustomerMemberIDByID() {
 		customer := model.Customer{
 			CardId:     int16(faker.RandomInt(-32768, 32767)),
 			Order:      int32(faker.RandomInt(-2147483648, 2147483647)),
-			MemberId:   sql.NullInt64{},
+			MemberId:   sql.NullInt32{},
 			Email:      faker.Internet().Email(),
 			Name:       faker.Name().Name(),
 			Address:    sql.NullString{},
 			CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-			UpdateTime: mysql.NullTime{
+			UpdateTime: sql.NullTime{
 				Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 				Valid: true,
 			},
@@ -2078,8 +2078,8 @@ func (s *JourneySuite) TestUpdateCustomerMemberIDByID() {
 	Convey("Test UpdateCustomerMemberIDByID()", s.T(), func() {
 		result, err := j.UpdateCustomerMemberIDByID(context.Background(), &model.Customer{
 			Id: 1,
-			MemberId: sql.NullInt64{
-				Int64: 100086,
+			MemberId: sql.NullInt32{
+				Int32: 100086,
 				Valid: true,
 			},
 		})
@@ -2094,7 +2094,7 @@ func (s *JourneySuite) TestUpdateCustomerMemberIDByID() {
 		err = j.DB.Get(&getCustomer, "SELECT * FROM customer WHERE id = ?", 1)
 		So(err, ShouldBeNil)
 		So(getCustomer.Id, ShouldEqual, 1)
-		So(getCustomer.MemberId.Int64, ShouldEqual, 100086)
+		So(getCustomer.MemberId.Int32, ShouldEqual, 100086)
 	})
 }
 
@@ -2107,15 +2107,15 @@ func (s *JourneySuite) TestUpdateCustomerMemberIDByIDList() {
 				Id:     1,
 				CardId: int16(faker.RandomInt(-32768, 32767)),
 				Order:  int32(faker.RandomInt(-2147483648, 2147483647)),
-				MemberId: sql.NullInt64{
-					Int64: 1,
+				MemberId: sql.NullInt32{
+					Int32: 1,
 					Valid: true,
 				},
 				Email:      faker.Internet().Email(),
 				Name:       faker.Name().Name(),
 				Address:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -2143,15 +2143,15 @@ func (s *JourneySuite) TestUpdateCustomerMemberIDByIDList() {
 				Id:     2,
 				CardId: int16(faker.RandomInt(-32768, 32767)),
 				Order:  int32(faker.RandomInt(-2147483648, 2147483647)),
-				MemberId: sql.NullInt64{
-					Int64: 2,
+				MemberId: sql.NullInt32{
+					Int32: 2,
 					Valid: true,
 				},
 				Email:      faker.Internet().Email(),
 				Name:       faker.Name().Name(),
 				Address:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -2179,15 +2179,15 @@ func (s *JourneySuite) TestUpdateCustomerMemberIDByIDList() {
 				Id:     3,
 				CardId: int16(faker.RandomInt(-32768, 32767)),
 				Order:  int32(faker.RandomInt(-2147483648, 2147483647)),
-				MemberId: sql.NullInt64{
-					Int64: 3,
+				MemberId: sql.NullInt32{
+					Int32: 3,
 					Valid: true,
 				},
 				Email:      faker.Internet().Email(),
 				Name:       "liupangzi",
 				Address:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -2211,8 +2211,8 @@ func (s *JourneySuite) TestUpdateCustomerMemberIDByIDList() {
 
 	Convey("Test UpdateCustomerMemberIDByIDList()", s.T(), func() {
 		result, err := j.UpdateCustomerMemberIDByIDList(context.Background(), &model.Customer{
-			MemberId: sql.NullInt64{
-				Int64: 100086,
+			MemberId: sql.NullInt32{
+				Int32: 100086,
 				Valid: true,
 			},
 		})
@@ -2227,7 +2227,7 @@ func (s *JourneySuite) TestUpdateCustomerMemberIDByIDList() {
 		err = j.DB.Get(&getCustomer, "SELECT * FROM customer WHERE member_id != 100086")
 		So(err, ShouldBeNil)
 		So(getCustomer.Id, ShouldEqual, 3)
-		So(getCustomer.MemberId.Int64, ShouldEqual, 3)
+		So(getCustomer.MemberId.Int32, ShouldEqual, 3)
 	})
 }
 
@@ -2241,12 +2241,12 @@ func (s *JourneySuite) TestDeleteCustomerByEmail() {
 		customer := model.Customer{
 			CardId:     int16(faker.RandomInt(-32768, 32767)),
 			Order:      int32(faker.RandomInt(-2147483648, 2147483647)),
-			MemberId:   sql.NullInt64{},
+			MemberId:   sql.NullInt32{},
 			Email:      email,
 			Name:       faker.Name().Name(),
 			Address:    sql.NullString{},
 			CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-			UpdateTime: mysql.NullTime{
+			UpdateTime: sql.NullTime{
 				Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 				Valid: true,
 			},
@@ -2301,12 +2301,12 @@ func (s *JourneySuite) TestDeleteCustomerByEmailOrIDList() {
 				Id:         1,
 				CardId:     int16(faker.RandomInt(-32768, 32767)),
 				Order:      int32(faker.RandomInt(-2147483648, 2147483647)),
-				MemberId:   sql.NullInt64{},
+				MemberId:   sql.NullInt32{},
 				Email:      email1,
 				Name:       faker.Name().Name(),
 				Address:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -2334,12 +2334,12 @@ func (s *JourneySuite) TestDeleteCustomerByEmailOrIDList() {
 				Id:         2,
 				CardId:     int16(faker.RandomInt(-32768, 32767)),
 				Order:      int32(faker.RandomInt(-2147483648, 2147483647)),
-				MemberId:   sql.NullInt64{},
+				MemberId:   sql.NullInt32{},
 				Email:      email2,
 				Name:       faker.Name().Name(),
 				Address:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
@@ -2367,12 +2367,12 @@ func (s *JourneySuite) TestDeleteCustomerByEmailOrIDList() {
 				Id:         3,
 				CardId:     int16(faker.RandomInt(-32768, 32767)),
 				Order:      int32(faker.RandomInt(-2147483648, 2147483647)),
-				MemberId:   sql.NullInt64{},
+				MemberId:   sql.NullInt32{},
 				Email:      email3,
 				Name:       faker.Name().Name(),
 				Address:    sql.NullString{},
 				CreateTime: time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
-				UpdateTime: mysql.NullTime{
+				UpdateTime: sql.NullTime{
 					Time:  time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), 0, now.Location()),
 					Valid: true,
 				},
